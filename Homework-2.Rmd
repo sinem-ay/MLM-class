@@ -1,0 +1,600 @@
+---
+title: "Homework-2"
+author: "Sinem Ayyaldaz"
+date: "5/22/2021"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework-2
+
+Dataset has two-level structure: individuals (level-1 units) are nested in countries (level-2 units). Check whether conservatism predicts collective action engagement (i.e., petition signing and participating in peaceful demostratations) and if so, whether this relationship varies between the countries.
+
+**Dataset variables:**
+
+* *cntry:* level-2 group identifier; respindent's country
+* *Democracy:* level-2 variable; the Economist's total democracy score
+* *Full:* level-2 variable; full democracy (0=no, 1=yes)
+* *Flawed:* level-2 variable; flawed democracy (0=no, 1=yes)
+* *Hybrid:* level-2 variable; hybrid regime (0=no, 1=yes)
+* *Auth:* level-2 variable; authoritarian regime (0=no, 1=yes)
+* *GDP:* level-2 variable; Gross domestic product per capita (1=1,000$)
+* *CA:* level-1 variable; collective action intentions (1=low, 3=high)
+* *Cons:* level-1 variable; self-positioning in political scale (1=left, 10=right)
+* *Sex:* level-1 variable; 1=male, 2=female
+* *Age:* level-1 variable; participant's age
+
+## Visualizing The Association Between Conservatism and Collective Action
+
+**1. Inspect the data. What is the relationship between conservatism and collective action in the whole sample? Provide a plot showing a regression line, as well as standardized and unstandardized regression coefficients. Can you draw any preliminary conclusions based on this plot?**
+
+![](scatterplot_col.jpg)
+
+The effect of conservatism on collective action is negative and significant, $B = -.04, SE = 0.001, p < .001$
+Generally, we can say that the less people are conservative the more they are engaged in collective action.
+However the correlation between collective action and conservatism is not that high, $r = -0.15$
+
+**2. Provide a plot showing regression lines for different countries. What can you say about the association between conservatism and collective action now?**
+
+![](scatter_intercountry.jpg)
+
+What we can obtain from the above graph is the inter-country variability of conservatism slopes. Most of the countries showed negative association while some countries represented positive or slight changes.
+
+## Null Model
+
+Fit a null model with CA as the DV and respond the following questions:
+
+**1. What is the estimate for the sample intercept?**
+
+Estimated value of the intercept is $\gamma_{00} = 1.86234$, standard error is $SE = 0.03907$, degrees of freedom is $df = 62.03972$, t-statistics is $t = 47.67$, and p-value is $p < .001$
+According to p-value, the conclusion is $\gamma_{00}$ differ from 0. In a null model $\gamma_{00}$ is equivalent to the sample mean.
+
+**2. What are the values of τ00 (level-2 variance) and σe2 (level-1 variance)? Compute and interpret ICC**
+
+Between-country variance of intercepts ($\tau_{00}$) has value of 0.09431 and the variance of within-country variance residuals ($\sigma_{e}^2$) has value of 0.36054.
+ICC = 0.2073431, which indicates 20% variability in collective action comes from the differences between countries.
+
+## Fixed Effects Model
+
+Fit a fixed effects model with grand mean centered conservatism as a sole level-1 predictor.
+
+**1. Is this model better than the null model? Provide the results of an appropriate test**
+
+I analyzed whether fixed effects model better than null model with running ANOVA analysis: fixed effects model lowered the deviance (152795) than null model (153557), $\Delta\chi^2(1) = 762.69, p < .001$
+Also, the fixed effects model had lower AIC (152803) and BIC (152840) values than null model. We can conclude that adding conservatism (fixed predictor) improved the model fit.
+
+**2. Is the effect of conservatism statistically significant? If so, how would you interpret it? What is the 95% CI for this effect?**
+
+The model indicated that conservatism is a negative and significant predictor of collective action ($\gamma_{10} = -0.0243, SE = 0.0009, df = 84240.5, t = -27.68, p < .001$). The lower conservatism orientation explained with higher collective action intentions.
+The 95% CI for the effect is between 1.79 and 1.94
+
+**3. What is the value of the intercept? Does it differ from 0? How would you interpret it?**
+
+Values for intercept are, $\gamma_{00} = 1.8630, SE = 0.0381, df = 62.0349, t = 48.89, p < .001$
+According to p-value, $\gamma_{00}$ differed significantly from 0. The mean of the outcome variable in the full sample differed from 0.
+
+**4. What are the values of τ00 (level-2 variance) and σe2 (level-1 variance)?**
+
+The value of $\tau_{00}$ equals to 0.08973 and the value of $\sigma_{e}^2$ equals to 0.35730.
+
+## Random Effects Model
+
+Fit a random effects model with grand mean centered conservatism as a sole level-1 predictor
+
+**1. Is this model better than the fixed effects model? Provide the results of an appropriate test**
+
+According to anova results, random effects model improved the model's fit to the data more than fixed effects model; random model's AIC (151392), BIC (151448), and deviance values were lower ($\Delta\chi^2(2) = 1414.8, p < .001$).
+
+**2. What is the estimated value of the intercept? How would you interpret it?**
+
+The estimates of intercept indicated that the collective action varied between individuals, average intercept differed positively and significantly from 0 ($\gamma_{00} = 1.86, SE = 0.04, df = 84217, t = 48.77, p < .001$)
+
+**3. What is the estimated value of the slope? Does the effect of conservatism differ between the countries? How do you know it?**
+
+The estimates of conservatism slope indicated that collective action varied across conservatism, average slope differed negatively and significantly from 0 ($\gamma_{10} = -0.02, SE = 0.004, df = 84217, t = -4.90, p < .001$)
+
+**4. What is the correlation between intercepts and slopes? Is it statistically
+significant? How would you interpret it?**
+
+The correlation between intercepts and slopes reported as negative ($r = -.57$) which indicated the larger the intercepts, the smaller the slopes - the larger the collective action intention the smaller the conservatism
+
+**5. What are the values of τ00 (level-2 intercepts variance), τ11 (level-2 slopes
+variance) and σe2 (level-1 variance)?**
+
+Level-2 intercepts variance recorded as $\tau_{00} = 0.09$, the variance of level-1 (within-countries) residuals recorded as $\sigma_{e}^2 = 0.35$, and level-2 variance for slopes recorded as $\tau_{11} = 0.001$
+
+**6. Plot random slopes (a histogram) and check whether they are distributed
+normally in the sample**
+
+![](normal_hist.jpg)
+
+According to normality test, distribution of the data are not significantly different from normal distribution ($p=0.4762$), therefore we can assume normality.
+
+## Bonus Questions
+
+Fit a model including grand mean centered conservatism as a random level-1 predictor, Democracy (do not center it) as level-2 predictor and conservatism X Democracy interaction
+
+**1. Is this model better than the random effects model? Provide the results of an appropriate test.**
+
+Bonus model (random effects model with level-1 and level-2 predictor) is better than random effects model. According to anova test, AIC (151355), BIC (151420), and deviance ($\Delta\chi^2(1) = 39.156, p < .001$) were lower for the bonus model.
+
+**2. Does Democracy explain the variability in slopes across the countries? How do you know it?**
+
+To answer the question whether Democracy explained variability in slopes across the countries, I calculated 95% CI range for slopes. The 95% CI for slopes ranged from 1.12 to 1.17, and it does not include 0. Therefore, Democracy explains variability in slopes across the countries.
+
+**3. What is the expected collective action score for a person with the raw conservatism score = 1 living in a country with Democracy index = 9.87?**
+
+Here are the equations I used:
+
+$Y_{ij} = \gamma_{00} + \gamma_{01}Z_{j} + \gamma_{10}X_{ij} + u_{0j} + u_{1j} + e_{ij}$
+
+$CA_{ij} = \gamma_{00} + \gamma_{01}Democracy_{j} + \gamma_{10}Conservatism{ij} + u_{0j} + u_{1j} + e_{ij}$
+
+Also,
+
+$\beta_{0j} = \gamma_{00} + \gamma_{01}Z_{j} + u_{0j}$
+
+$\beta_{1j} = \gamma_{10}X_{ij} + u_{1j}$
+
+The country with Democracy index = 9.87 is Norway, *j* = Norway. By looking at the *random.model.ranef* we can obtain $u_{0j} = 0.127254630$ and $u_{1j} = 0.017948092$
+With finding $\beta_{0j} = 2.335537$ and $\beta_{1j} = -0.005215908$, I only sum them up for finding expected collective action - and found that 2.330321.
+
+**4. What is the expected collective action score for a person with the raw conservatism score = 1 living in a country with Democracy index = 6.67?**
+
+The equations remained same, the country with Democracy index = 6.67 is Poland, *j* = Poland. By looking at the *random.model.ranef* we can obtain $u_{0j} = 0.111640235$ and $u_{1j} = 0.018924188$
+With finding $\beta_{0j} = 2.319923$ and $\beta_{1j} = -0.004239812$, I only sum them up for finding expected collective action - and found that 2.315683.
+
+# Codes
+
+First step is installing and loading the packages
+
+```{r, include=TRUE, eval=FALSE}
+install.packages("foreign") # to load .sav file
+install.packages("memisc")
+install.packages("sjstats") # to compute ICC 
+install.packages("ggplot2") # to create plots 
+install.packages("RColorBrewer") # data graphing 
+install.packages("robumeta") # for group-mean centering 
+install.packages("lmerTest") # to perform multilevel models
+install.packages("HLMdiag") # to diagnose models
+install.packages("lmtest") # to compare models 
+install.packages("rcompanion") # to draw a histogram with a normal curve
+```
+
+```{r, include=TRUE, message=FALSE}
+library(foreign) 
+library(memisc)
+library(ggplot2) 
+library(RColorBrewer) 
+library(robumeta) 
+library(lmerTest) 
+library(sjstats) 
+library(lmtest) 
+library(HLMdiag) 
+library(rcompanion)
+library(QuantPsyc)
+```
+
+Then I loaded the data - here I encountered with an error says: WVS_EVS.sav: Unrecognized record type 7, subtype 8 encountered in system fileUndeclared level(s) 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81 added in variable: age
+As far as I searched about the source of the error, I could not find any solution (some of them were saying the `foreign` package is old and not updated quite well). There were suggestions of using different package to import data, however, it did not work and values of *age* variable imported as N/A. I ignored this issue since we do not have any questions in the homework related to age.
+
+```{r, include=TRUE}
+library(foreign)
+mydata <- read.spss("WVS_EVS.sav", to.data.frame = TRUE)
+```
+
+Also, I removed the missing values.
+
+```{r, include=TRUE}
+mydata <- na.omit(mydata)
+sum(is.na(mydata))
+```
+
+## Inspecting data
+
+```{r, include=TRUE}
+head(mydata)
+str(mydata)
+```
+
+Transform factors into numerical variables; there  are 3 factor variables which are *cntry*, *cons*, *sex*, and *age*
+**Like I said, there is an error with age variable, it is stored as factor. So I did not include it. Because if I transfer age variable from factor to numerical, it gives ages like 4 years old, which is weird**
+
+```{r, include=TRUE}
+mydata$cntrynum <- as.numeric(mydata$cntry)
+mydata$consnum <- as.numeric(mydata$cons)
+mydata$sexnum <- as.numeric(mydata$sex)
+# mydata$agenum <- as.numeric(mydata$age)
+```
+
+```{r, include=TRUE}
+summary(mydata)
+```
+
+## Graphing data
+
+Here is the plot for investigating the relationship between conservatism and collective action.
+
+```{r, include=TRUE}
+plot(mydata$CA ~ mydata$consnum)
+```
+
+More detailed version of this plot
+
+```{r, include=TRUE}
+library(ggplot2)
+ggplot(data=mydata,
+       aes(x=consnum, y=CA)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        theme_bw()+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+```
+
+```{r, include=TRUE}
+ggplot(data=mydata,
+       aes(x=consnum, y=CA)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        geom_smooth(method=lm,
+                    se=TRUE,
+                    col="red",
+                    size=.5,
+                    alpha=.8)+
+        theme_bw()+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+```
+
+```{r, include=TRUE}
+jpeg('scatterplot_col.jpg')
+ggplot(data=mydata,
+       aes(x=consnum, y=CA)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        geom_smooth(method=lm,
+                    se=TRUE,
+                    col="red",
+                    size=.5,
+                    alpha=.8)+
+        theme_bw()+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+dev.off()
+```
+
+**Visualizing-Question 1:** It seems like there is negative linear relationship between conservatism and collective action. Next step is running simple regression to get coefficients:
+
+```{r, include=TRUE}
+summary(lm(CA ~ consnum, data = mydata))
+```
+
+```{r, include=TRUE}
+library(QuantPsyc)
+lm.beta(lm(CA ~ consnum, data = mydata))
+```
+
+**Visualizing-Question 1:** The effect of conservatism on collective action is negative and significant, $B = -.04, SE = 0.001, p < .001$
+However the correlation between collective action and conservatism is not that high, $r = -0.15$
+
+```{r, include=TRUE}
+ggplot(data=mydata,
+       aes(x=consnum, y=CA, col=cntrynum)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        theme_bw()+
+        theme(legend.position = "none")+
+        scale_color_gradientn(colours = rainbow(100))+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+```
+
+```{r, include=TRUE}
+ggplot(data=mydata,
+       aes(x=consnum, y=CA, col=cntrynum, group=cntrynum)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        theme_bw()+
+        theme(legend.position = "none")+
+        scale_color_gradientn(colours = rainbow(100))+
+        geom_smooth(method=lm,
+                    se=FALSE,
+                    size=.5,
+                    alpha=.8)+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+```
+
+```{r, include=TRUE}
+jpeg('scatter_intercountry.jpg')
+ggplot(data=mydata,
+       aes(x=consnum, y=CA, col=cntrynum, group=cntrynum)) +
+        geom_point(size=0.5,
+                   alpha=.8,
+                   position="jitter")+
+        theme_bw()+
+        theme(legend.position = "none")+
+        scale_color_gradientn(colours = rainbow(100))+
+        geom_smooth(method=lm,
+                    se=FALSE,
+                    size=.5,
+                    alpha=.8)+
+        labs(title="Collective action vs. conservatism",
+             y="Collective action",
+             x="Conservatism")
+dev.off()
+```
+
+**Visualizing-Question 2:** What we can obtain from the above graph is the inter-country variability of conservatism slopes. Most of the countries showed negative association while some countries represented positive or slight changes.
+
+## Centering predictors
+
+**Grand mean centering conservatism (level-1 predictor)**
+
+Subtracting mean of conservatism from the individual scores. Then I created a new variable named *consnum_grand_mean*
+
+```{r, include=TRUE}
+summary(mydata$consnum)
+```
+
+```{r, include=TRUE}
+mydata$consnum_grand_mean <- mydata$consnum-5.633
+head(mydata)
+```
+
+In addition to grand mean centering of conservatism, I did group-mean centering. I stored the new variables into *consnum_group_mean*
+
+```{r, include=TRUE}
+mydata$consnum_group_mean <- group.center(var = mydata$consnum, grp = mydata$cntrynum)
+head(mydata)
+```
+
+## Model estimation
+
+## Null model
+
+Null model equation:
+
+$Y_{ij} = \beta_{0j} + e_{ij}$
+
+The observed results for person *i* in group *j* ($Y_{ij}$) is the sum of the intercept of group *j* ($\beta_{0j}$) and residuals for person *i* in group *j* ($e_{ij}$)
+
+$\gamma_{00}$ is the grand mean across all countries and samples, and $u_{0j}$ is level-2 residual: ($\beta_{0j} = \gamma_{00} + u_{0j}$)
+
+Final version of the equation:
+
+$Y_{ij} = \gamma_{00} + u_{0j} + e_{ij}$
+
+In this example, the equation transforms into:
+
+$CA_{ij} = \gamma_{00} + u_{0j} + e_{ij}$
+
+```{r, include=TRUE}
+null.model <- lmer(CA ~ 1 + (1|cntrynum),
+                   data = mydata,
+                   REML = FALSE)
+summary(null.model)
+```
+
+**Nullmodel-Question2:** Between-country variance of intercepts ($\tau_{00}$) has value of 0.09431 and the variance of within-country variance residuals ($\sigma_2$) has value of 0.36054.
+
+**Calculation of ICC (Intraclass correlation):**
+
+```{r, include=TRUE}
+icc <- 0.09431/(0.09431+0.36054)
+icc
+```
+
+Checking whether we calculated ICC correct or not, with a package `sjstats`
+
+```{r, include=TRUE}
+icc(null.model)
+```
+
+**Nullmodel-Question 2** ICC = 0.2073431, which indicates 20% variability in collective action comes from the differences between countries.
+
+**Nullmodel-Question 1:** Estimated value of level-2 intercept is $\gamma_{00} = 1.86234$, standard error is $SE = 0.03907$, degrees of freedom is $df = 62.03972$, t-statistics is $t = 47.67$, and p-value is $p < .001$
+According to p-value, the conclusion is $\gamma_{00}$ differ from 0. In a null model $\gamma_{00}$ is equivalent to the sample mean.
+
+## Fixed effects model
+
+Fixed effects model formula:
+
+$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + u_{0j} + e_{ij}$
+
+In this quesition, the equation forms into:
+
+$CA_{ij} = \gamma_{00} + \gamma_{10}conservatism_{ij} + u_{0j} + e_{ij}$
+
+```{r, include=TRUE}
+fixed.model <- lmer(CA ~ 1 + consnum_grand_mean + (1|cntrynum),
+                    data = mydata, REML = FALSE)
+summary(fixed.model)
+```
+
+```{r, include=TRUE}
+ci = (0.0381088)*(1.96)
+gamma00 = 1.8629967
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Fixedmodel-Question2-3-4:** The model indicated that conservatism is a negative and significant predictor of collective action ($\gamma_{10} = -0.0243, SE = 0.0009, df = 84240.5, t = -27.68, p < .001$). Values for intercept are, $\gamma_{00} = 1.8630, SE = 0.0381, df = 62.0349, t = 48.89, p < .001$
+The 95% CI for the effect is between 1.79 and 1.94
+The value of $\tau_{00}$ equals to 0.08973 and the value of $\sigma_{e}^2$ equals to 0.35730.
+
+Comparison of the fit of the fixed effects model and null model:
+
+```{r, include=TRUE}
+anova(null.model, fixed.model)
+```
+
+**Fixedmodel-Question1:** I analyzed whether fixed effects model better than null model with running ANOVA analysis: fixed effects model lowered the deviance (152795) than null model (153557), $\Delta\chi^2(1) = 762.69, p < .001$
+Also, the fixed effects model had lower AIC (152803) and BIC (152840) values than null model. We can conclude that adding conservatism (fixed predictor) improved the model fit.
+
+## Random effects model
+
+The formula for random effects model:
+
+$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + u_{0j} + u_{1j}X_{ij} + e_{ij}$
+
+For the question, the formula transformed into:
+
+$CA_{ij} = \gamma_{00} + \gamma_{10}conservatism_{ij} + u_{0j} + u_{1j}conservatism_{ij} + e_{ij}$
+
+Model:
+
+```{r, include=TRUE}
+random.model <- lmer(CA ~ 1 + consnum_grand_mean + (1 + consnum_grand_mean|cntrynum),
+                     data = mydata, REML = FALSE)
+summary(random.model)
+```
+
+```{r, include=TRUE}
+library(nlme)
+random.model.lme <- lme(CA ~ 1 + consnum_grand_mean, random = ~ consnum_grand_mean | cntrynum,
+                        data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+summary(random.model.lme)
+```
+
+**Random-Question2:** The estimates of intercept indicated that the collective action varied between individuals, average intercept differed positively and significantly from 0 ($\gamma_{00} = 1.86, SE = 0.04, df = 84217, t = 48.77, p < .001$)
+**Random-Question3:** The estimates of conservatism slope indicated that collective action varied across conservatism, average slope differed negatively and significantly from 0 ($\gamma_{10} = -0.02, SE = 0.004, df = 84217, t = -4.90, p < .001$)
+**Random-Question4:** The correlation between intercepts and slopes reported as negative ($r = -.57$) which indicated the larger the intercepts, the smaller the slopes - the larger the collective action intention the smaller the conservatism
+**Random-Question5:** Level-2 intercepts variance recorded as $\tau_{00} = 0.09$, the variance of level-1 (within-countries) residuals recorded as $\sigma_{e}^2 = 0.35$, and level-2 variance for slopes recorded as $\tau_{11} = 0.001$
+
+
+Checking whether the conservatism slope from fized to random model improved model's fit to the data: 
+
+```{r, include=TRUE}
+anova(fixed.model, random.model)
+```
+
+**Random-Question1:** According to anova results, random effects model improved the model's fit to the data more than fixed effects model; random model's AIC (151392), BIC (151448), and deviance values were lower ($\Delta\chi^2(2) = 1414.8, p < .001$).
+
+Random effects for particular countries:
+
+```{r, include=TRUE}
+random.model.ranef <- as.data.frame(ranef(random.model))
+```
+
+Checking normal distribution of slope residuals:
+
+```{r, include=TRUE}
+random.model.slope <- random.model.ranef[which(random.model.ranef$term=="consnum_grand_mean"), ]
+head(random.model.slope)
+```
+
+Plot and normality test with Shapiro-Wilk test:
+
+```{r, include=TRUE}
+plotNormalHistogram(random.model.slope$condval)
+```
+
+```{r, include=TRUE}
+jpeg('normal_hist.jpg')
+plotNormalHistogram(random.model.slope$condval)
+dev.off()
+```
+
+```{r, include=TRUE}
+shapiro.test(random.model.slope$condval)
+```
+
+According to normality test, distribution of the data are not significantly different from normal distribution ($p=0.4762$), therefore we can assume normality.
+
+## Bonus questions
+
+Random effects model with level-1 and level-2 predictor:
+
+```{r, include=TRUE}
+bonus.model <- lmer(CA ~ 1 + consnum_grand_mean + Democracy + (1 + consnum_grand_mean|cntrynum),
+                data = mydata, REML = FALSE)
+summary(bonus.model)
+```
+
+Comparing bonus.model and bonus.model2:
+
+```{r, include=TRUE}
+anova(random.model, bonus.model)
+```
+
+**Bonus-Question-1:** Bonus model (random effects model with level-1 and level-2 predictor) is better than random effects model. According to anova test, AIC (151355), BIC (151420), and deviance ($\Delta\chi^2(1) = 39.156, p < .001$) were lower for the bonus model.
+
+```{r, include=TRUE}
+ci = (0.012274)*(1.96)
+gamma00 = 1.142964
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Bonus-Question-2:** To answer the question whether Democracy explained variability in slopes across the countries, I calculated 95% CI range for slopes. The 95% CI for slopes ranged from 1.12 to 1.17, and it does not include 0. Therefore, Democracy explains variability in slopes across the countries.
+
+```{r, include=TRUE}
+bonus.model.ranef <- as.data.frame(ranef(bonus.model))
+```
+
+**Bonus-Question-3:** Here are the equations I used:
+
+$Y_{ij} = \gamma_{00} + \gamma_{01}Z_{j} + \gamma_{10}X_{ij} + u_{0j} + u_{1j} + e_{ij}$
+
+$CA_{ij} = \gamma_{00} + \gamma_{01}Democracy_{j} + \gamma_{10}Conservatism{ij} + u_{0j} + u_{1j} + e_{ij}$
+
+Also,
+
+$\beta_{0j} = \gamma_{00} + \gamma_{01}Z_{j} + u_{0j}$
+
+$\beta_{1j} = \gamma_{10}X_{ij} + u_{1j}$
+
+The country with Democracy index = 9.87 is Norway, *j* = Norway. By looking at the *random.model.ranef* we can obtain $u_{0j} = 0.127254630$ and $u_{1j} = 0.017948092$
+
+```{r, include=TRUE}
+beta0j <- 1.142964 + 0.107935*9.87 + 0.127254630
+beta0j
+```
+
+```{r, include=TRUE}
+beta1j <- -0.023164*1 + 0.017948092
+beta1j
+```
+
+With finding $\beta_{0j} = 2.335537$ and $\beta_{1j} = -0.005215908$, I only sum them up for finding expected collective action - and found that 2.330321.
+
+```{r, include=TRUE}
+beta0j+beta1j
+```
+
+**Bonus-Question-4:** The equations remained same, the country with Democracy index = 6.67 is Poland, *j* = Poland. By looking at the *random.model.ranef* we can obtain $u_{0j} = 0.111640235$ and $u_{1j} = 0.018924188$
+With finding $\beta_{0j} = 2.319923$ and $\beta_{1j} = -0.004239812$, I only sum them up for finding expected collective action - and found that 2.315683.
+
+```{r, include=TRUE}
+beta0j <- 1.142964 + 0.107935*9.87 + 0.111640235
+beta0j
+```
+
+```{r, include=TRUE}
+beta1j <- -0.023164*1 + 0.018924188
+beta1j
+```
+
+```{r, include=TRUE}
+beta0j+beta1j
+```

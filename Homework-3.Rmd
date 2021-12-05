@@ -1,0 +1,654 @@
+---
+title: "Homework-3"
+author: "Sinem Ayyaldaz"
+date: "6/10/2021"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework-3
+
+You are going to analyze data from the 8th wave (2016) wave of the European Social Survey. The study was conducted in 23 European countries. The data set you received has a two-level structure: individuals (level-1 units) are nested in countries (level-2 units). Your task would be to check what factors explain sexism.
+
+**Dataset variables:**
+
+* *country:* level-2 group identifier; respondent's country
+* *catholics:* level-2 variable; proportion of Catholics in the population of given country
+* *gender_inequality:* level-2 variable; based on UN's Gender Inequality Index; 0=low values, 1=high values (than the European average)
+* *jobs:* level-1 variable; "Men should have more right to job than women when jobs are scarce" (1=strongly disagree, 2=disagree, 3=neither disagree, nor agree, 4=agree, 5=strongly agree); serves as the measure of sexism
+* *gender:* level-1 variable: 0=male, 1=female
+
+## Visualizing the Association between Gender and Sexism
+
+**Inspect the data. What is the relationship between gender and sexism in specific countries? Provide a plot showing this association across all countries comprising the sample. Can you draw any preliminary conclusions based on this plot?**
+
+![](gender_sexism.jpg)
+
+According to the plot that demonstrates the relationship between gender and sexism in specific countries indicated a meaningful relationship. In each country, the regression line was negative which means that being female was an indicator of less sexist approaches than males.
+
+## Null Model
+
+Fit a null model with jobs as the DV and respond the following questions:
+
+**a) What is the estimate for the sample intercept? Provide 95% PVI and 95% CI**
+
+Estimated value of sample intercept is $\gamma_{00} = 1.92732$, standard error is $SE = 0.08149$, degrees of freedom is $df = 22.98848$, t-statistics is $t = 23.65$, and p-value is $p < .001$
+According to p-value, the conclusion is $\gamma_{00}$ differ from 0. In a null model $\gamma_{00}$ is equivalent to the sample mean. 95% PVI is between 1.162724 and 2.691916. 95% CI is between 1.7676 and 2.08704.
+
+**b) What are the values of τ00 (level-2 variance) and σe2 (level-1 variance)? Compute and interpret ICC**
+
+Between-country variance of intercepts ($\tau_{00}$) has value of 0.1521 and the variance of within-country variance residuals ($\sigma_2$) has value of 1.0658.
+ICC = 0.1248871, which indicates 12% variability in collective action comes from the differences between countries.
+
+**c) Is intercountry variability in intercepts significant? How do you know it?**
+
+95% CI for level-2 error standard deviation ranges 0.29 to 0.52 which means it is significant. There is a considerable variability in intercepts between groups. 95% CI for level-1 error standard deviation does not include 0, it ranges from 1.03 to 1.04 which means there is significant amount of level-1 variance to be explained
+
+## Fixed Effects Model
+
+Fit a fixed effects model with gender as a sole level-1 predictor.
+
+**a) Is this model better than the null model? Provide the results of an appropriate test**
+
+I analyzed whether fixed effects model better than null model with running ANOVA analysis: fixed effects model lowered the deviance (126664) than null model (127450), $\Delta\chi^2(1) = 785.89, p < .001$
+Also, the fixed effects model had lower AIC (126672) and BIC (126707) values than null model. We can conclude that adding gender (fixed predictor) improved the model fit.
+
+**b) Is the effect of gender statistically significant? If so, how would you interpret it? What is the 95% CI for this effect?**
+
+The model indicated that gender is a negative and significant predictor of sexism ($\gamma_{10} = -0.276150, SE = 0.009806, df = 43858.518274, t = -28.16, p < .001$). We can generally interpret that being male was associated with being sexist. 95% CI for the gender effect was from -0.2953698 to -0.2569302.
+
+**c) What is the value of the intercept? Does it differ from 0? How would you interpret it?**
+
+Values for intercept are, $\gamma_{00} = 2.349007, SE = 0.083908, df = 24.526368, t = 28.00, p < .001$. The p-value is lower than .05, therefore, the value of the intercept differs from 0. 
+
+**d) What are the values of τ00 (level-2 variance) and σe2 (level-1 variance)?**
+
+The value of $\tau_{00}$ equals to 0.1562 and the value of $\sigma_{e}^2$ equals to 1.0468.
+
+## Random Effects Model
+
+Fit a random effects model with gender as a sole level-1 predictor.
+
+**a) Is this model better than the fixed-effect model? Provide the results of an appropriate test**
+
+According to anova results, random effects model improved the model's fit to the data more than fixed effects model; random model's AIC (126494), BIC (126546), and deviance values were lower ($\Delta\chi^2(2) = 182.61, p < .001$).
+
+**b) What is the estimated value of the intercept? How would you interpret it? Calculate 95% PVI and 95% CI**
+
+The estimates of intercept indicated that the sexism varied between individuals, average intercept differed positively and significantly from 0 ($\gamma_{00} = 2.33273, SE = 0.11943, df = 22.97872, t = 19.532, p < .001$). 95% of countries in our sample have their estimated intercepts between 1.22043 and 3.44503. 95% CI for intercept estimate ranges from 2.098647 to 2.566813.
+
+**c) What is the estimated value of the slope? Does the effect of gender differ between the countries? How do you know it? Compute and interpret 95% PVI for the slope estimate. Provide the 95% CI, as well**
+
+The estimates of gender slope indicated that sexism varied across gender, average slope differed negatively and significantly from 0 ($\gamma_{10} = -0.26428, SE = 0.03195, df = 23.24912, t = -8.272, p < .001$). 95% of countries in our sample have their estimated slopes between -0.549264 and 0.020704. 95% CI for slope estimate from -0.326902 to -0.201658.
+
+**d) Visualize intercepts and slopes using sjPlot library**
+
+![](sjplot.jpg)
+
+![](sjplot2.png)
+
+**e) What is the correlation between intercepts and slopes? Is it statistically significant? How would you interpret it? What are the values of τ00 (level-2 intercepts variance), τ11 (level-2 slopes variance) and σe2 (level-1 variance)?**
+
+The correlation between intercepts and slopes reported as negative, ($-0.839$) which indicated the larger the intercepts, the smaller the slopes - the larger the sexism intention the smaller the gender female. Level-2 intercepts variance recorded as $\tau_{00} = 0.32$, the variance of level-1 (within-countries) residuals recorded as $\sigma_{e}^2 = 1.04$, and level-2 variance for slopes recorded as $\tau_{11} = 0.02$
+
+**d) Extra question - Create a model-based spaghetti plot for the effects of gender.**
+
+Error in data[, idvar] : incorrect number of dimensions
+
+My attempt:
+
+```{r, include=TRUE}
+#effects_countries <- ranef(random.model)
+#effects_countries$`(Intercept)` <- effects_countries$`(Intercept)`+2.33273
+#effects_countries$gendernum <- effects_countries$gendernum+(-0.26428)
+
+#effects_countries$pred_1 <- effects_countries$`(Intercept)`+1*effects_countries$gendernum
+#effects_countries$pred_2 <- effects_countries$`(Intercept)`+2*effects_countries$gendernum
+
+#head(effects_countries)
+
+#effects_countries_long <- reshape(effects_countries,
+                                  #varying = c("pred_1", "pred_2"),
+                                  #timevar = "gendernum",
+                                  #direction = "long", idvar = "countrynum", sep = "_")
+```
+## Cross-level Interaction
+
+Fit a model including gender as a random level-1 predictor, gender_inequality as a level- 2 predictor and gender × gender inequality cross-level interaction.
+
+**a) Is this model better than the random effects model? Provide the results of an appropriate test**
+
+I used logLikelihood value to calculate deviance and the measure of model's fit. The model deviance is $-2*-63235.88 = 126471.8$ for cross-level interaction. And the model had lower deviance than random model deviance, which was $-2*-63240.8 = 126481.6$. It means that the current model fits data better.
+Also, lrtest obtained the same results regarding the model's fit ($p < .01$).
+
+**b) Does gender inequality explain the variability in slopes across the countries? How do you know it?**
+
+Based on 95% CI for slopes' SD, we can conclude that after including gender inequality and gender X gender inequality in the mode, the variability in slopes remain significant. Because, the 95% CIs [0.09;0.18] did not include 0.
+
+**c) What is the estimated value of the intercept? How would you interpret it? Calculate 95% PVI and 95% CI**
+
+Y: sexism (jobs), intercept, $\gamma_{00}$
+X: gender, $\gamma_{10}$
+Z: gender_inequality, $\gamma_{01}$
+gender X gender_inequality, $\gamma_{1001}$
+The estimate of $\gamma_{00}$ (predicted sexism when gender = 0, which indacated being male and gender inequality = 0, which indicates low values in gender inequality index, is 2.0393114, $SE = 0.13, df = 43855, t = 15.78, p < .001$). As p < .001, the intercept estimate differs from 0.
+The normal distribution of intercepts in the present sample, we can conclude that 95% of countries in our sample have their estimated intercepts between 1.140132 and 2.938491. The 95% CI for intercept estiamte ranges from 1.786056 to 2.292567. This interval does not include 0, which leads intercept value differs significantly from 0.
+
+**d) What is the estimated value of the slope? How would you interpret it? Compute and interpret 95% PVI for the slope estimate. Provide the 95% CI, as well**
+
+$\gamma_{10}$ estimate - the average slope for gender when Z = 0, is -0.2040243, $SE = 0.04, df = 43855, t = -5.33, p < .001$. It concludes that -0.20 is the estimated value of gender effect for individiuals living in countries with low values in gender inequality index (Z = 0). The normal distribution of slopes in the present sample, we can conclide that 95% of countries in our sample have their estimated slopes between -0.4555033 and 0.04745468. The 95% CI for slope estimate ranges from -0.2790269 to -0.1290217. This interval does not include 0, which leads slope value differs significantly from 0.
+
+**e) What are the values of τ00 (level-2 intercepts variance), τ11 (level-2 slopes variance) and σe2 (level-1 variance), and slopes-intercepts correlation?**
+
+The value of $\tau_{00}$ (level-2 intercepts variance) is 0.21, $\tau_{11}$ (level-2 slopes variance) is 0.02, and $\sigma_{e}^2$ (level-1 variance) is 1.04. The slopes-intercepts correlation is, $r_{intercept,slope}=-.80$
+
+**f) Provide the estimates (as well as standard errors and p-values) of the intercepts in countries characterized by low and high gender inequality. Do these two groups of countries differ significantly regarding the intercepts? How do you know it? What is the interpretation of this difference?**
+
+Changing the reference category - gender inequality. With `recode()` function, a new variable, *low_gender_inequality* created, and it mirrored the values of *gender_inequality* variable - 0 would be 1, and 1 would be 0; low values should be high values and high values should be low values.
+The intercept values in countries that had low or high values in gender inequality index listed as:
+Countries with low gender inequality values, $\beta_{0j} = 2.04, SE = 0.13, p < .001$
+Countries with high gender inequality values, $\beta_{0j} = 2.71, SE = 0.15, p < .001$
+It indicates that two groups of countries differ significantly regarding the intercepts; high gender inequality values in countries was seen more significantly in sexism comparing to low gender inequality values in countries and their sexism rates.
+
+**g) Provide the estimates (as well as standard errors and p-values) of the slopes in countries characterized by low and high gender inequality. Do these two groups of countries differ significantly regarding the slopes? What is the interpretation of this difference?**
+
+The gender effects (slopes) in countries that had low or high values in gender inequality index listed as:
+Countries with low gender inequality values, $\beta_{1j} = -0.20, SE = 0.04, p < .001$
+Countries with high gender inequality values, $\beta_{1j} = -0.34, SE = 0.04, p < .001$
+It indicates that two groups of countries differ significantly regarding the slopes; gender effect was a significant predictor of sexism in countries that had high gender inequality values compared to the countries that had low gender ineqaulity values.
+
+**h) Visualize the effects of gender in countries characterized by low and high gender inequality**
+
+![](cross-level.jpg)
+
+## Model with a covariate
+
+Fit a model including gender as a random level-1 predictor, gender_inequality as a level- 2 predictor, the proportion of Catholics in country’s population (centered), gender × gender inequality cross-level interaction, and gender × catholics (centered) cross-level interaction.
+
+**a) Is this model better than the cross-level interaction model? Provide the results of an appropriate test**
+
+I used logLikelihood value to calculate deviance and the measure of model's fit. The model deviance is $-2*-63235.22 = 126470.4$ for covariate model. And the model had lower deviance than cross-level interaction model, which was $-2*-63235.88 = 126471.8$. It means that the current model fits data better.
+On the other hand, lrtest obtained the different results regarding the model's fit ($p = .5165$). But likelihood-ratio tests are more conservative.
+
+**b) Is gender × gender inequality cross-level interaction still significant? What does it mean?**
+
+Gender x gender_inequality cross-level interaction is still significant, $\gamma_{1001} = -0.14, SE = 0.06, df = 43854, t = -2.43, p < .05$. It means that adding catholic measurement and its interaction with gender, did not change the significance of gender X gender inequality interaction; it is still a significant predictor for sexism.
+
+**c) What is the relationship between the proportion of Catholics in a country population and sexism?**
+
+The relationship between the proportion of catholics in a country and sexism is not significant, $\gamma_{02} = 0.29, SE = 0.29, df = 20, t = 1.01, p = .3239$
+
+**d) Extra 2 points**
+
+$\gamma_{00} = 2.04, SE = 0.13, df = 43854, t = 16.10, p < .001$
+$\gamma_{01} = 0.68, SE = 0.19, df = 20, t = 3.57, p < .01$
+$\gamma_{02} = 0.29, SE = 0.29, df = 20, t = 1.01, p = .3239$
+$\gamma_{10} = -0.20, SE = 0.04, df = 43854, t = -5.34, p < .001$
+$\gamma_{1001} = -0.14, SE = 0.06, df = 43854, t = -2.43, p < .05$
+$\gamma_{1002} = -0.04, SE = 0.09, df = 43854, t = -0.46, p = .6487$
+
+Table attached in email separately.
+
+# Codes
+
+```{r, include=TRUE, eval=FALSE}
+install.packages("foreign") # to load .sav file
+install.packages("memisc")
+install.packages("sjstats") # to compute ICC 
+install.packages("ggplot2") # to create plots 
+install.packages("RColorBrewer") # data graphing 
+install.packages("robumeta") # for group-mean centering 
+install.packages("lmerTest") # to perform multilevel models
+install.packages("HLMdiag") # to diagnose models
+install.packages("lmtest") # to compare models 
+install.packages("rcompanion") # to draw a histogram with a normal curve
+install.packages("sjPlot") # intercepts and slopes plot
+install.packages("glmmTMB")
+install.packages("car")
+install.packages("effects")
+```
+
+```{r, include=TRUE, message=FALSE}
+library(foreign) 
+library(memisc)
+library(ggplot2) 
+library(RColorBrewer) 
+library(robumeta) 
+library(lmerTest) 
+library(sjstats)
+library(nlme)
+library(lmtest) 
+library(HLMdiag) 
+library(rcompanion)
+library(QuantPsyc)
+library(sjPlot)
+library(glmmTMB)
+library(car)
+library(effects)
+library(reshape2)
+```
+
+Importing the dataset and then I checked the missing values with `sum(is.na())` and there were no missing values.
+
+```{r, include=TRUE}
+mydata <- read.spss("H3.sav", to.data.frame = TRUE)
+```
+
+## Inspecting data
+
+And transforming variables into numerical variables. There are 3 factor variables, *country*, *gender*, and *jobs*. I transformed them into numerical ones.
+
+```{r, include=TRUE}
+str(mydata)
+```
+
+```{r, include=TRUE}
+mydata$countrynum <- as.numeric(mydata$country)
+mydata$gendernum <- as.numeric(mydata$gender)
+mydata$jobsnum <- as.numeric(mydata$jobs)
+```
+
+## Graphing data
+
+Plots for investigating the relationship between gender and sexism, and the relationship in specific countries
+
+```{r, include=TRUE}
+plot(mydata$jobs ~ mydata$gender)
+```
+
+```{r, include=TRUE}
+summary(lm(jobsnum ~ gendernum, data = mydata))
+```
+
+```{r, include=TRUE}
+ggplot(mydata, aes(x=gendernum, y=jobsnum, group=country)) +
+        xlab("Gender") + ylab("Sexism") + ylim(1,3) +
+        geom_smooth(method="lm", se=TRUE, color="black") +
+        facet_wrap(~country, ncol = 10) +
+        theme_bw(base_size = 20) +
+        theme(axis.title.x = element_text(size=30),
+              axis.title.y = element_text(face = "plain", size = 14, lineheight = 5.0, hjust = 0.5))
+```
+
+```{r, include=TRUE}
+jpeg(filename = "gender_sexism.jpg", width = 1500, height = 1000)
+ggplot(mydata, aes(x=gendernum, y=jobsnum, group=country)) +
+        xlab("Gender") + ylab("Sexism") + ylim(1,3) +
+        geom_smooth(method="lm", se=TRUE, color="black") +
+        facet_wrap(~country, ncol = 10) +
+        theme_bw(base_size = 20) +
+        theme(axis.title.x = element_text(size=30),
+              axis.title.y = element_text(face = "plain", size = 14, lineheight = 5.0, hjust = 0.5))
+dev.off()
+```
+
+## Grand mean centering
+
+Grand mean centering for level-2 predictor, level-2 continous variable (catholics):
+
+```{r, include=TRUE}
+summary(mydata$catholics)
+```
+
+```{r, include=TRUE}
+mydata$catholics_grand_mean <- mydata$catholics-0.4033
+```
+
+## Null model
+
+Null model equation:
+
+$Y_{ij} = \beta_{0j} + e_{ij}$
+
+The observed results for person *i* in group *j* ($Y_{ij}$) is the sum of the intercept of group *j* ($\beta_{0j}$) and residuals for person *i* in group *j* ($e_{ij}$)
+
+$\gamma_{00}$ is the grand mean across all countries and samples, and $u_{0j}$ is level-2 residual: ($\beta_{0j} = \gamma_{00} + u_{0j}$)
+
+Final version of the equation:
+
+$Y_{ij} = \gamma_{00} + u_{0j} + e_{ij}$
+
+In this example, the equation transforms into:
+
+$sexism_{ij} = \gamma_{00} + u_{0j} + e_{ij}$
+
+```{r, include=TRUE}
+null.model <- lmer(jobsnum ~ 1 + (1|countrynum),
+                   data = mydata,
+                   REML = FALSE)
+summary(null.model)
+```
+
+```{r, include=TRUE}
+#PVI
+pi = (0.3901)*(1.96)
+gamma00 = 1.92732
+upper_bound_pi = gamma00 + pi
+lower_bound_pi = gamma00 - pi
+cat(lower_bound_pi, upper_bound_pi)
+
+#CI
+ci = (0.08149)*(1.96)
+gamma00 = 1.92732
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Question-a:** Estimated value of sample intercept is $\gamma_{00} = 1.92732$, standard error is $SE = 0.08149$, degrees of freedom is $df = 22.98848$, t-statistics is $t = 23.65$, and p-value is $p < .001$
+According to p-value, the conclusion is $\gamma_{00}$ differ from 0. In a null model $\gamma_{00}$ is equivalent to the sample mean. 95% PVI is between 1.162724 and 2.691916. 95% CI is between 1.7676 and 2.08704.
+
+```{r, include=TRUE}
+icc <- 0.1521/(0.1521+1.0658)
+icc
+icc(null.model)
+```
+
+**Question-b:** Between-country variance of intercepts ($\tau_{00}$) has value of 0.1521 and the variance of within-country variance residuals ($\sigma_2$) has value of 1.0658.
+ICC = 0.1248871, which indicates 12% variability in collective action comes from the differences between countries.
+
+```{r, include=TRUE}
+null.model2 <- lme(jobsnum ~ 1, random = ~1 | countrynum, data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+intervals(null.model2, which = "var-cov")
+```
+
+**Question-c:** 95% CI for level-2 error standard deviation ranges 0.29 to 0.52 which means it is significant. There is a considerable variability in intercepts between groups. 95% CI for level-1 error standard deviation does not include 0, it ranges from 1.03 to 1.04 which means there is significant amount of level-1 variance to be explained
+
+## Fixed effects model
+
+Fixed effects model formula:
+
+$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + u_{0j} + e_{ij}$
+
+In this quesition, the equation forms into:
+
+$sexism_{ij} = \gamma_{00} + \gamma_{10}gender_{ij} + u_{0j} + e_{ij}$
+
+```{r, include=TRUE}
+fixed.model <- lmer(jobsnum ~ 1 + gendernum + (1|countrynum),
+                    data = mydata, REML = FALSE)
+summary(fixed.model)
+```
+
+```{r, include=TRUE}
+anova(null.model, fixed.model)
+```
+
+```{r, include=TRUE}
+#CI
+ci = (0.083908)*(1.96)
+gamma00 = 2.349007
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+#Slope
+ci = (0.009806)*(1.96)
+gamma10 = -0.276150
+upper_bound_ci = gamma10 + ci
+lower_bound_ci = gamma10 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Question-a:** I analyzed whether fixed effects model better than null model with running ANOVA analysis: fixed effects model lowered the deviance (126664) than null model (127450), $\Delta\chi^2(1) = 785.89, p < .001$
+Also, the fixed effects model had lower AIC (126672) and BIC (126707) values than null model. We can conclude that adding gender (fixed predictor) improved the model fit.
+
+**Question-b:** The model indicated that gender is a negative and significant predictor of sexism ($\gamma_{10} = -0.276150, SE = 0.009806, df = 43858.518274, t = -28.16, p < .001$).  We can generally interpret that being male was associated with being sexist. 95% CI for the gender effect was from -0.2953698 to -0.2569302.
+
+**Question-c:** Values for intercept are, $\gamma_{00} = 2.349007, SE = 0.083908, df = 24.526368, t = 28.00, p < .001$. The p-value is lower than .05, therefore, the value of the intercept differs from 0. 
+
+**Question-d:** The value of $\tau_{00}$ equals to 0.1562 and the value of $\sigma_{e}^2$ equals to 1.0468.
+
+## Random effects model
+
+The formula for random effects model:
+
+$Y_{ij} = \gamma_{00} + \gamma_{10}X_{ij} + u_{0j} + u_{1j}X_{ij} + e_{ij}$
+
+For the question, the formula transformed into:
+
+$sexism_{ij} = \gamma_{00} + \gamma_{10}gender_{ij} + u_{0j} + u_{1j}gender_{ij} + e_{ij}$
+
+```{r, include=TRUE}
+random.model <- lmer(jobsnum ~ 1 + gendernum + (1 + gendernum|countrynum),
+                     data = mydata, REML = FALSE)
+summary(random.model)
+```
+
+```{r, include=TRUE}
+random.model.lme <- lme(jobsnum ~ 1 + gendernum, random = ~ gendernum | countrynum,
+                        data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+summary(random.model.lme)
+```
+
+```{r, include=TRUE}
+anova(fixed.model, random.model)
+```
+
+```{r, include=TRUE}
+#PVI
+pi = (0.5675)*(1.96)
+gamma00 = 2.33273
+upper_bound_pi = gamma00 + pi
+lower_bound_pi = gamma00 - pi
+cat(lower_bound_pi, upper_bound_pi)
+
+#CI
+ci = (0.11943)*(1.96)
+gamma00 = 2.33273
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+```{r, include=TRUE}
+#PVI slopes
+pi = (0.1454)*(1.96)
+gamma10 = -0.26428
+upper_bound_pi = gamma10 + pi
+lower_bound_pi = gamma10 - pi
+cat(lower_bound_pi, upper_bound_pi)
+
+#CI slopes
+ci = (0.03195)*(1.96)
+gamma10 = -0.26428
+upper_bound_ci = gamma10 + ci
+lower_bound_ci = gamma10 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Question-a:** According to anova results, random effects model improved the model's fit to the data more than fixed effects model; random model's AIC (126494), BIC (126546), and deviance values were lower ($\Delta\chi^2(2) = 182.61, p < .001$).
+
+**Question-b:** The estimates of intercept indicated that the sexism varied between individuals, average intercept differed positively and significantly from 0 ($\gamma_{00} = 2.33273, SE = 0.11943, df = 22.97872, t = 19.532, p < .001$). 95% of countries in our sample have their estimated intercepts between 1.22043 and 3.44503. 95% CI for intercept estimate ranges from 2.098647 to 2.566813.
+
+**Question-c:** The estimates of gender slope indicated that sexism varied across gender, average slope differed negatively and significantly from 0 ($\gamma_{10} = -0.26428, SE = 0.03195, df = 23.24912, t = -8.272, p < .001$). 95% of countries in our sample have their estimated slopes between -0.549264 and 0.020704. 95% CI for slope estimate from -0.326902 to -0.201658.
+
+**Question-d:** Intercept and slopes visualizations below
+
+```{r, include=TRUE}
+random.model.plot <- lmer(jobsnum ~ 1 + gender + (1 + gender|country),
+                     data = mydata, REML = FALSE)
+plot_model(random.model.plot, type = "re", sort.est = "sort.all", grid = FALSE, free.scale = FALSE)
+```
+
+```{r, include=TRUE}
+jpeg(filename = "sjplot.jpg")
+random.model.plot <- lmer(jobsnum ~ 1 + gender + (1 + gender|country),
+                     data = mydata, REML = FALSE)
+plot_model(random.model.plot, type = "re", sort.est = "sort.all", grid = FALSE, free.scale = FALSE)
+dev.off()
+```
+
+**Question-e:** The correlation between intercepts and slopes reported as negative, ($-0.839$) which indicated the larger the intercepts, the smaller the slopes - the larger the sexism intention the smaller the gender female. Level-2 intercepts variance recorded as $\tau_{00} = 0.32$, the variance of level-1 (within-countries) residuals recorded as $\sigma_{e}^2 = 1.04$, and level-2 variance for slopes recorded as $\tau_{11} = 0.02$
+
+## Spaghetti plot
+
+```{r, include=TRUE}
+effects_countries <- ranef(random.model)
+effects_countries$`(Intercept)` <- effects_countries$`(Intercept)`+2.33273
+effects_countries$gendernum <- effects_countries$gendernum+(-0.26428)
+
+effects_countries$pred_1 <- effects_countries$`(Intercept)`+1*effects_countries$gendernum
+effects_countries$pred_2 <- effects_countries$`(Intercept)`+2*effects_countries$gendernum
+
+head(effects_countries)
+
+#effects_countries_long <- reshape(effects_countries,
+                                  #varying = c("pred_1", "pred_2"),
+                                  #timevar = "gendernum",
+                                  #direction = "long", idvar = "countrynum", sep = "_")
+```
+
+## Cross-level interaction
+
+```{r, include=TRUE}
+interaction.model <- lme(jobsnum ~ 1 + gendernum + gender_inequality + gendernum*gender_inequality, random = ~ gendernum | countrynum, data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+summary(interaction.model)
+```
+
+```{r, include=TRUE}
+lrtest(random.model, interaction.model)
+```
+
+**Question-a:** I used logLikelihood value to calculate deviance and the measure of model's fit. The model deviance is $-2*-63235.88 = 126471.8$ for cross-level interaction. And the model had lower deviance than random model deviance, which was $-2*-63240.8 = 126481.6$. It means that the current model fits data better.
+Also, lrtest obtained the same results regarding the model's fit ($p < .01$).
+
+```{r, include=TRUE}
+#PVI slopes
+pi = (0.1283056)*(1.96)
+gamma10 = -0.2040243
+upper_bound_pi = gamma10 + pi
+lower_bound_pi = gamma10 - pi
+cat(lower_bound_pi, upper_bound_pi)
+
+#CI slopes
+ci = (0.03826662)*(1.96)
+gamma10 = -0.2040243
+upper_bound_ci = gamma10 + ci
+lower_bound_ci = gamma10 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+```{r, include=TRUE}
+#PVI intercept
+pi = (0.4587649)*(1.96)
+gamma00 = 2.0393114
+upper_bound_pi = gamma00 + pi
+lower_bound_pi = gamma00 - pi
+cat(lower_bound_pi, upper_bound_pi)
+
+#CI intercept
+ci = (0.12921188)*(1.96)
+gamma00 = 2.0393114
+upper_bound_ci = gamma00 + ci
+lower_bound_ci = gamma00 - ci
+cat(lower_bound_ci, upper_bound_ci)
+```
+
+**Question-c:**
+Y: sexism (jobs), intercept, $\gamma_{00}$
+X: gender, $\gamma_{10}$
+Z: gender_inequality, $\gamma_{01}$
+gender X gender_inequality, $\gamma_{1001}$
+The estimate of $\gamma_{00}$ (predicted sexism when gender = 0, which indacated being male and gender inequality = 0, which indicates low values in gender inequality index, is 2.0393114, $SE = 0.13, df = 43855, t = 15.78, p < .001$). As p < .001, the intercept estimate differs from 0.
+The normal distribution of intercepts in the present sample, we can conclude that 95% of countries in our sample have their estimated intercepts between 1.140132 and 2.938491. The 95% CI for intercept estiamte ranges from 1.786056 to 2.292567. This interval does not include 0, which leads intercept value differs significantly from 0.
+
+**Question-d:** $\gamma_{10}$ estimate - the average slope for gender when Z = 0, is -0.2040243, $SE = 0.04, df = 43855, t = -5.33, p < .001$. It concludes that -0.20 is the estimated value of gender effect for individiuals living in countries with low values in gender inequality index (Z = 0). The normal distribution of slopes in the present sample, we can conclide that 95% of countries in our sample have their estimated slopes between -0.4555033 and 0.04745468. The 95% CI for slope estimate ranges from -0.2790269 to -0.1290217. This interval does not include 0, which leads slope value differs significantly from 0.
+
+```{r, include=TRUE}
+VarCorr(interaction.model)
+intervals(interaction.model, which = "var-cov")
+```
+
+**Question-b:** Based on 95% CI for slopes' SD, we can conclude that after including gender inequality and gender X gender inequality in the mode, the variability in slopes remain significant. Because, the 95% CIs [0.09;0.18] did not include 0.
+
+**Question-e:** The value of $\tau_{00}$ (level-2 intercepts variance) is 0.21, $\tau_{11}$ (level-2 slopes variance) is 0.02, and $\sigma_{e}^2$ (level-1 variance) is 1.04. The slopes-intercepts correlation is, $r_{intercept,slope}=-.80$
+
+Changing the reference category - gender inequality. With `recode()` function, a new variable, *low_gender_inequality* created, and it mirrored the values of *gender_inequality* variable - 0 would be 1, and 1 would be 0; low values should be high values and high values should be low values.
+
+```{r, include=TRUE}
+mydata$low_gender_inequality <- recode(mydata$gender_inequality, "0=1;1=0")
+head(mydata)
+```
+
+```{r, include=TRUE}
+interaction.model2 <- lme(jobsnum ~ 1 + gendernum + low_gender_inequality + gendernum*low_gender_inequality, random = ~ gendernum | countrynum, data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+summary(interaction.model2)
+```
+
+**Question-f:** The intercept values in countries that had low or high values in gender inequality index listed as:
+Countries with low gender inequality values, $\beta_{0j} = 2.04, SE = 0.13, p < .001$
+Countries with high gender inequality values, $\beta_{0j} = 2.71, SE = 0.15, p < .001$
+It indicates that two groups of countries differ significantly regarding the intercepts; high gender inequality values in countries was seen more significantly in sexism comparing to low gender inequality values in countries and their sexism rates.
+
+
+**Question-g:** The gender effects (slopes) in countries that had low or high values in gender inequality index listed as:
+Countries with low gender inequality values, $\beta_{1j} = -0.20, SE = 0.04, p < .001$
+Countries with high gender inequality values, $\beta_{1j} = -0.34, SE = 0.04, p < .001$
+It indicates that two groups of countries differ significantly regarding the slopes; gender effect was a significant predictor of sexism in countries that had high gender inequality values compared to the countries that had low gender ineqaulity values.
+
+Visualization of the effects of gender in countries chatacterized by low and high gender inequality:
+
+```{r, include=TRUE}
+ef1 <- effect(term = "gendernum*gender_inequality", mod = interaction.model)
+efdata1 <- as.data.frame(ef1)
+```
+
+```{r, include=TRUE}
+ggplot(efdata1, aes(x=gendernum, y=fit, color=gender_inequality, group=gender_inequality)) + 
+        coord_cartesian(xlim = c(1,2), ylim = c(1,5)) + 
+        geom_line(size=1.2) + 
+        geom_ribbon(aes(ymin=lower,ymax=upper,
+                        fill=gender_inequality), alpha=0.3) + 
+        labs(title = "Cross-level interaction",
+             x="Gender", y="Sexism", color="gender_inequality", fill="gender_inequality") + 
+        theme_bw() + 
+        theme(text = element_text(size=20))
+```
+
+```{r, include=TRUE}
+jpeg(filename = "cross-level.jpg")
+ggplot(efdata1, aes(x=gendernum, y=fit, color=gender_inequality, group=gender_inequality)) + 
+        coord_cartesian(xlim = c(1,2), ylim = c(1,5)) + 
+        geom_line(size=1.2) + 
+        geom_ribbon(aes(ymin=lower,ymax=upper,
+                        fill=gender_inequality), alpha=0.3) + 
+        labs(title = "Cross-level interaction",
+             x="Gender", y="Sexism", color="gender_inequality", fill="gender_inequality") + 
+        theme_bw() + 
+        theme(text = element_text(size=20))
+dev.off()
+```
+
+## Model with a covariate
+
+```{r, include=TRUE}
+covariate <- lme(jobsnum ~ 1 + gendernum + gender_inequality + gendernum*gender_inequality + catholics_grand_mean + gendernum*catholics_grand_mean, random = ~ gendernum | countrynum, data = mydata, na.action = na.omit, method = "ML", control = list(opt="optim"))
+summary(covariate)
+```
+
+```{r, include=TRUE}
+lrtest(interaction.model, covariate)
+```
+
+**Question-a:** I used logLikelihood value to calculate deviance and the measure of model's fit. The model deviance is $-2*-63235.22 = 126470.4$ for covariate model. And the model had lower deviance than cross-level interaction model, which was $-2*-63235.88 = 126471.8$. It means that the current model fits data better.
+On the other hand, lrtest obtained the different results regarding the model's fit ($p = .5165$). But likelihood-ratio tests are more conservative.
+
+**Question-b:** Gender x gender_inequality cross-level interaction is still significant, $\gamma_{1001} = -0.14, SE = 0.06, df = 43854, t = -2.43, p < .05$. It means that adding catholic measurement and its interaction with gender, did not change the significance of gender X gender inequality interaction; it is still a significant predictor for sexism.
+
+**Question-c:** The relationship between the proportion of catholics in a country and sexism is not significant, $\gamma_{02} = 0.29, SE = 0.29, df = 20, t = 1.01, p = .3239$
+
+**Question-d:** 
+$\gamma_{00} = 2.04, SE = 0.13, df = 43854, t = 16.10, p < .001$
+$\gamma_{01} = 0.68, SE = 0.19, df = 20, t = 3.57, p < .01$
+$\gamma_{02} = 0.29, SE = 0.29, df = 20, t = 1.01, p = .3239$
+$\gamma_{10} = -0.20, SE = 0.04, df = 43854, t = -5.34, p < .001$
+$\gamma_{1001} = -0.14, SE = 0.06, df = 43854, t = -2.43, p < .05$
+$\gamma_{1002} = -0.04, SE = 0.09, df = 43854, t = -0.46, p = .6487$
+
+

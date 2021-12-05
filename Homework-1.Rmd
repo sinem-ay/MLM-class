@@ -1,0 +1,338 @@
+---
+title: "Homework-1"
+author: "Sinem Ayyaldaz"
+date: "3/29/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Data collected in representative survey of Poles conducted in 2019.
+Homework: Check what factors predict dehumanization of political opponents.
+
+**Dataset variables:**
+
+* hb_w1 dehumanization of political opponents 
+* P53 political orientation
+* IDpart_w1 party identification
+* Gender 0 = female, 1 = male (Actually, it is 1 = female, and 2 = male after transfering data from spss file to dataset form)
+* Age age
+* Edu-years years of full-time education
+* F2 settlement size
+* M4 subjective economic status
+
+# Importing data
+
+First of all, I loaded the required package - *foreign* for importing .sav files as a dataframe and I imported the file under the name of *mydata*
+
+```{r, include=TRUE}
+# install.packages("foreign")
+library(foreign)
+```
+
+```{r, include=TRUE}
+mydata <- read.spss("H1.sav", to.data.frame = TRUE)
+```
+
+# Inspecting data
+
+```{r, include=TRUE}
+str(mydata)
+```
+
+P53, gender, and F2 are stored in factor variable and the rest of the variables stored as numerical.
+
+# Homework Question 1
+
+> Inspect the data. Are the relationships between the dehumanization of political opponents and its two potential predictors – party identification and political orientation – linear? Provide scatterplots.
+
+First of all, I checked the descriptive statistics of the variables - dehumanization of political opponents (DV), political orientation (IV), and party identification (IV)
+
+```{r, include=TRUE}
+summary(mydata$hb_w1)
+summary(mydata$P53)
+summary(mydata$IDpart_w1)
+```
+
+Then, I plotted the (a) relationship between dehumanization of political opponents and political orientation. In the second plot, I examined the the (b) relationship between dehumanization of political opponnents and party identification
+
+```{r, include=TRUE}
+#plot(hb_w1 ~ P53, data=mydata, main="Relationship A", 
+     #xlab="Political Orientation", ylab="Dehumanization") #This one creates boxplots, because P53 is a factor variable, so I tried to convert the factor variable to numerical
+plot(hb_w1 ~ as.numeric(P53), data=mydata, main="Relationship A", 
+     xlab="Political Orientation", ylab="Dehumanization")
+```
+
+```{r, include=TRUE}
+plot(hb_w1 ~ IDpart_w1, data=mydata, main="Relationship B", 
+     xlab="Part Identification", ylab="Dehumanization")
+```
+
+Looks like the relationships are not that meaningful?
+
+```{r, include=FALSE}
+jpeg('scatter_hbw1_p53.jpg')
+plot(hb_w1 ~ as.numeric(P53), data=mydata, main="Relationship A", 
+     xlab="Political Orientation", ylab="Dehumanization")
+dev.off()
+```
+
+```{r, include=FALSE}
+jpeg('scatter_hbw1_idpartw1.jpg')
+plot(hb_w1 ~ IDpart_w1, data=mydata, main="Relationship B", 
+     xlab="Part Identification", ylab="Dehumanization")
+dev.off()
+```
+
+# Homework Question 2
+
+> Regress dehumanization of political opponents on gender, age, education, settlement size and perceived economic status (Model 1). How much DV’s variance is explained by this model? Does the model fit data well, as expressed in its F statistic? For all predictors, report the unstandardized and the standardized coefficients as well as 95% CIs for the unstandardized coefficients. How may you interpret the relationships between the DV and each of the explanatory variables?
+
+I used the multiple regression method; gender, age, education, settlement size and perceived economic status prediction on dehumanization
+I transformed the factor variables to numeric variables. 
+
+```{r, include=TRUE}
+mod1 <- lm(hb_w1 ~ as.numeric(gender) + age + edu_years + as.numeric(F2) + as.numeric(M4), data=mydata)
+summary(mod1)
+```
+
+Checking the sums of squares, confidence intervals for unstandardized coefficients and obtain standardized coefficients.
+
+```{r, include=TRUE}
+anova(mod1)
+```
+
+```{r, include=TRUE}
+confint(mod1)
+```
+
+```{r, include=FALSE}
+# install.packages("QuantPsyc")
+library(QuantPsyc)
+```
+
+```{r, include=TRUE}
+lm.beta(mod1)
+```
+
+The multiple regression model with all five predictors created ($F(5,611) = 2.022, p = .07$). According to t-test and p-value for the each predictor, there was only significant relationship between 2 predictors (education years and subjective economic status) and dehumanization.
+
+1. When we report further, the relationship between gender and dehumanization was not significant ($B_{1} = 0.11, SE = 0.19, p = .5574$); it indicates that the gender was not associated with the dehumanization of political opponents. The 95% confidence interval for gender was between -0.300 and 0.468.
+2. The relationship between age and dehumanization was also not significant ($B_{2} = 0.006, SE = 0.007, p = .3850$); it indicates that the age was not effecting the dehumanization as well. The 95% CI for age was between -0.007 and 0.019 (?)
+3. The relationship between eduction year and dehumanization was significant ($B_{3} = 0.08, SE = 0.04, p < .05$); it indicates that the increase in education years resulted as increase in dehumanization of political opponents. The 95% CI for education year was between 0.006 and 0.148.
+4. The relationship between settlement size and dehumanization was not significant ($B_{4} = -0.09, SE = 0.05, p = .0797$); it indicated that the settlement size and dehumanization were not connected in this case. The 95% CI for settlement size was between -0.197 and 0.011.
+5. The relationship between subjective economic status and dehumanization was significant ($B_{5} = -0.24, SE = 0.12, p < .05$); it indicates that the lower subjective economic status was associated with the increased dehumanization (?) The 95% CI for subjective economic status was between -0.477 and -0.004.
+
+According to ANOVA results, the effect of subjective economic status is significant ($F(1,611) = 3.98, p < .05$) when the other predictors are controlled. 
+
+# Homework Question 3
+
+> Add party identification as an explanatory variable (Model 2). What is the relationship between dehumanization of political opponents and this new predictor? Where there any changes in the effects of the remaining predictors? Report unstandardized and standardized coefficients, 95% confidence intervals, p-values, model’s F-statistic and R2. Compare the fit of Models 1 and 2.
+
+First of all, I investigated the relationship between dehumanization and party identification.
+
+```{r, include=TRUE}
+mod2 <- lm(hb_w1 ~ IDpart_w1, data=mydata)
+summary(mod2)
+```
+
+```{r, include=TRUE}
+confint(mod2)
+```
+
+The simple regression model used for anaylsing the relationship between dehumanization and party identification ($R^{2} = .019, F(1,615) = 11.65, p < .001$). The intercept differs significantly from 0 ($B_{0} = 0.84, SE = 0.32, p < .01$). And, the relationship between dehumanization and party identification was positive ($B_{1} = 0.23, SE = 0.07, p < .001$). A unit increase in party identification results in 0.23 increase in dehumanization of political opponents. In other words, when party identification increases (?), the dehumanization of political opponents increases. The 95% CI of party identification was between 0.204 and 1.474.
+
+Next, I checked sum of squares with `anova()`
+
+```{r, include=TRUE}
+anova(mod2)
+```
+
+According to ANOVA results, the effect of party identification on dehumanization was significant ($F(1,615) = 11.65, p < .001$).
+
+To see the effect of the party identification to other predictors that I used in first model, I added party identification as the new predictor of the multiple regression model that I created (model 1).
+
+```{r, include=TRUE}
+mod2a <- lm(hb_w1 ~ IDpart_w1 + as.numeric(gender) + age + edu_years + as.numeric(F2) + as.numeric(M4), data=mydata)
+summary(mod2a)
+```
+
+```{r, include=TRUE}
+confint(mod2a)
+```
+
+```{r, include=TRUE}
+lm.beta(mod2a)
+```
+
+The multiple regression model used for this analysis ($R^{2} = .037, F(6,610) = 3.956, p < .001$).
+
+When we included party identification to the model 1, the relationship between party identification and dehumanization was still significant ($B_{1} = 0.25, SE = 0.07, p < .001$). The 95% CI for party identification was between 0.114 and 0.378.
+
+```{r, include=TRUE}
+anova(mod1, mod2a)
+```
+
+There was a decrese in residual sum of squares - the values dropped from 3465.6 to 3391.0. This difference was also significant ($F = 13.42, p < .001$). It means that the party identification improved the fit of the model.
+
+# Homework Question 4
+
+> Add political orientation as another explanatory variable (Model 3). Report unstandardized and standardized coefficients, 95% confidence intervals, p-values, F- statistic for Model 3 and R2. Compare the fit of Models 2 and 3. Did the effect of party identification change after accounting for political orientation? Provide the plots presenting the effects of all predictors.
+
+This time -without losing time with conducting simple regression-, I start with adding political orientation as an another predictor in our multiple regression model.
+
+```{r, include=TRUE}
+mod3 <- lm(hb_w1 ~ as.numeric(P53) + IDpart_w1 + as.numeric(gender) + age + edu_years + as.numeric(F2) + as.numeric(M4), data=mydata)
+summary(mod3)
+```
+
+```{r, include=TRUE}
+anova(mod3)
+```
+
+```{r, include=TRUE}
+confint(mod3)
+```
+
+```{r, include=TRUE}
+lm.beta(mod3)
+```
+
+Multiple regression model conducted for analysing the relationship between political orientation along all the other predictors on dehumanization ($R^{2} = .042, F(7,609) = 3.786, p < .001$).
+The significance level of the other predictors with the addition of the new predictor did not changed. The relationship between political orientation and dehumanization was not significant ($B_{1} = -0.09, SE = 0.05, p = .1008$). The 95% CI of political orientation was between -0.191 and 0.017. However, the party identification ($B_{2} = 0.25, SE = 0.07, p < .001$), education years ($B_{5} = 0.08, SE = 0.04, p < .05$), and subjective economic status ($B_{7} = -0.30, SE = 0.12, p < .05$) remained significant.
+
+Now, comparison of model 2 and model 3:
+
+```{r, include=TRUE}
+anova(mod2a, mod3)
+```
+
+The outcome indicates that there was a decrease from model 2 to model 3. But, the difference was not significant ($F = 2.70, p = .101$). It means that adding political orientaton did not improve the fit of the model.
+
+```{r, include = TRUE, echo=FALSE}
+# install.packages("car")
+# install.packages("effects")
+library(car)
+library(effects)
+```
+
+```{r, include=TRUE}
+compareCoefs(mod1, mod2a, mod3)
+```
+
+To use the `predictorEffects()` function, you have to get rid off the `as.numeric()` statements - I did not understand why -, and I did it. However, it gives not the same results. Also, when I checked the new model 3 (which named as mod3a), with `summary()`, the results are also different. And I am not sure if I suppose to transfer variables to the numeric ones, which I thought it is what we suppose to do.
+
+```{r, include=TRUE}
+# plot(predictorEffects(mod3))
+# It gives error!
+```
+
+```{r, include=TRUE}
+mod3a <- lm(hb_w1 ~ P53 + IDpart_w1 + gender + age + edu_years + F2 + M4, data=mydata)
+plot(predictorEffects(mod3a))
+```
+
+```{r, include=TRUE}
+jpeg('effect.jpg')
+plot(predictorEffects(mod3a))
+dev.off()
+```
+
+# Homework Question 5
+
+> Diagnose Model 3
+
+Multicollinearity:
+
+```{r, include=TRUE}
+vif(mod3)
+mean(vif(mod3))
+1/vif(mod3)
+```
+
+VIF is lower than 10, therefore, the model has no problem with multicollinearity. Also, mean VIF is lower than 5.
+
+Independence condition:
+
+```{r, include=TRUE}
+durbinWatsonTest(mod3)
+```
+
+The p-value is 0.136, therefore we cannot reject the null hypothesis. It indicates that the assumption of independence is met. Also, the D-W statistic is 1.89 which is also close to 2.
+
+Homogenity of variance:
+
+```{r, include=TRUE}
+residualPlots(mod3)
+```
+
+Influential cases - Cook's distance:
+
+```{r, include = TRUE}
+mydata$cooks.mod3 <- cooks.distance(mod3)
+head(mydata)
+```
+
+```{r, include=TRUE}
+summary(mydata$cooks.mod3)
+```
+
+Maximum value for cook's distance is 3.117e-02, it is larger than 1. There might be influential cases.
+
+Residuals plot:
+
+```{r, include=TRUE}
+qqPlot(mod3)
+```
+
+The distribution of residuals are not normal(?)
+
+# Homework Question 6
+
+> Report the results of Models 1-3 in a tabular form in accordance with APA guidelines
+
+![](modelstable.png)
+
+# BONUS QUESTION
+
+> the residualPlots() function produces the results of Tukey test. What is the H0 specific to this test? What does the result obtained for Model 3 tell us? Does changing the model in accordance with Tukey test improve the fit? (hint: if you want to add a quadratic term for variable x to regression model, you can do it by adding I(x^2) to regression equation code). Visualize the model-based relationship between the predictor you modified and the DV.
+
+```{r, include=TRUE}
+residualPlots(mod3)
+```
+
+```{r, include=TRUE}
+jpeg('residualplot.jpg')
+residualPlots(mod3)
+dev.off()
+```
+
+I am not sure about this answer:
+
+If the variances of residuals are homogeneous, the blue line is flat. But Tukey test indicates significant results for P53 (political orientation) ($p < .01$). This variance is not homogenous.
+
+```{r, include=TRUE}
+mod3a <- lm(hb_w1 ~ P53, data=mydata)
+av <- aov(mod3a)
+summary(av)
+```
+
+```{r, include=TRUE}
+tukey <- TukeyHSD(av)
+tukey
+```
+
+According to ANOVA, there is a significant different between political orientation, but with Tukey test, there are 3 groups that differed significantly? So, we cannot improve??
+
+I do not know how to modify the predictor, isn't the `TukeyHSD()` gives modified results already? Anyway, I tried something
+
+```{r, include=TRUE}
+
+# tukey1 <- lm(hb_w1 ~ P53 + I(P53^2), data=mydata) - it gives an error, contrasts can be applied only to factors with 2 or more levels, but there are more than 2 levels. 
+```
+
+It gives an error that I couldn't solve, however, if it would not I could compare there results from tukey1 and mod3 to see what would change after modyfying.
