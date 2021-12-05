@@ -1,11 +1,4 @@
----
-title: "Homework-1"
-author: "Sinem Ayyaldaz"
-date: "3/29/2021"
-output:
-  pdf_document: default
-  html_document: default
----
+# Homework 1
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
